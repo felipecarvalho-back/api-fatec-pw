@@ -1,0 +1,38 @@
+==============================================================================
+RESPOSTAS - PARTE 1: PESQUISA CONCEITUAL
+Atividade Pratica: Autenticacao e Autorizacao com JWT e Sequelize
+==============================================================================
+
+1. O que e o padrao JWT (JSON Web Token) e por que ele e chamado de "Stateless"?
+   - JWT e um padrao aberto (RFC 7519) para transmitir informacoes em formato JSON de forma compacta e segura entre duas partes.
+   - Ele e chamado de "Stateless" (sem estado) porque o servidor nao precisa guardar sessoes em memoria ou banco de dados. Todas as informacoes necessarias para validar o usuario estao dentro do proprio token.
+   - Diferenca para Sessao/Cookies: Na sessao tradicional, o servidor guarda os dados do usuario logado (RAM/banco) e o navegador envia apenas um ID de sessao no cookie. No JWT, o servidor apenas valida a assinatura matematica do token enviado em cada requisicao, facilitando a escalabilidade.
+
+------------------------------------------------------------------------------
+
+2. Quais sao as tres partes que compoem um token JWT (xxxxx.yyyyy.zzzzz)?
+   - Header: Informa o tipo do token ("JWT") e o algoritmo de criptografia/assinatura (ex: HS256).
+   - Payload: Contem os dados do usuario (claims), como id, email, role e tempo de expiracao (exp).
+   - Signature: E a assinatura gerada a partir da uniao do Header + Payload + Chave Secreta. Garante que o token nao foi adulterado.
+   - As informacoes do Payload sao criptografadas? Nao. Elas sao apenas codificadas em Base64Url (qualquer pessoa consegue decodificar e ler). Por isso, informacoes sigilosas como senhas nunca devem ser colocadas no payload.
+
+------------------------------------------------------------------------------
+
+3. Por que o token e enviado no cabecalho "Authorization: Bearer <token>"?
+   - E o padrao internacional de mercado (definido no protocolo OAuth 2.0 / HTTP) para envio de credenciais de acesso em APIs REST.
+   - Significado de "Bearer": Significa "ao portador". Ou seja, qualquer requisicao que esteja portando (de posse) daquele token sera tratada como autorizada para o usuario dono do token.
+
+------------------------------------------------------------------------------
+
+4. Por que nunca devemos salvar senhas em texto puro no banco de dados?
+   - Se o banco de dados for invadido ou vazar, as senhas de todos os usuarios ficarao expostas imediatamente.
+   - Como o bcrypt atua: Ele transforma a senha em um hash unidirecional (impossivel de ser descriptografado de volta para o texto original).
+   - Salt Rounds: E um numero aleatorio ("sal") gerado e misturado com a senha antes de gerar o hash. O numero de rounds define o esforco computacional. Isso impede que invasores usem Rainbow Tables (tabelas de senhas pre-calculadas) para descobrir senhas comuns.
+
+------------------------------------------------------------------------------
+
+5. Qual a diferenca entre Autenticacao (Authentication) e Autorizacao (Authorization)?
+   - Autenticacao: Identifica quem e o usuario ("Quem e voce?"). Ocorre quando o usuario fornece email e senha no /login e o sistema valida.
+   - Autorizacao: Verifica o que o usuario autenticado tem permissao de fazer ("O que voce pode acessar?").
+   - Aplicacao do RBAC (Role-Based Access Control) no projeto: Define papeis de acesso. No nosso projeto, usuarios comuns ("user") podem consultar e cadastrar alunos, mas apenas usuarios administradores ("admin") possuem autorizacao para excluir registros de alunos (DELETE /api/alunos/:id).
+==============================================================================
